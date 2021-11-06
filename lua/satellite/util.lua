@@ -8,4 +8,8 @@ M.split = function(string, delimiter)
     return result;
 end
 
+M.strip = function(s)
+   return (s:gsub("^%s*(.-)%s*$", "%1"))
+end
+
 return M

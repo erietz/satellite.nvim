@@ -113,7 +113,11 @@ function Request:parse_response(lines)
     local headers = {}
     for i = 2, #lines do
         if string.find(lines[i], "^[%a%-]+:%s") then
-            table.insert(headers, lines[i])
+            local header = util.split(lines[i], ":")
+            local key = header[1]
+            local value = header[2]
+            headers[key] = value
+            -- table.insert(headers, lines[i])
             if string.find(lines[i]:lower(), "^content%-type:") then
                 self.response_content_type = util.split(lines[i], " ")[2]
             end
