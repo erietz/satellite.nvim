@@ -6,10 +6,10 @@ Request.__index = Request
 function Request:new()
     return setmetatable({
         request_url = nil,
-        request_headers = nil,
+        request_headers = {},
         response_raw = nil,
         response_body = nil,
-        response_headers = nil,
+        response_headers = {},
         response_content_type = nil,
         status_code = nil
     }, Request)
@@ -68,42 +68,14 @@ x-github-request-id: A01E:4498:2BC7B02:4ECF0C2:6186CF36
 
 {
   "login": "erietz",
-  "id": 11425271,
-  "node_id": "MDQ6VXNlcjExNDI1Mjcx",
-  "avatar_url": "https://avatars.githubusercontent.com/u/11425271?v=4",
-  "gravatar_id": "",
-  "url": "https://api.github.com/users/erietz",
-  "html_url": "https://github.com/erietz",
-  "followers_url": "https://api.github.com/users/erietz/followers",
-  "following_url": "https://api.github.com/users/erietz/following{/other_user}",
-  "gists_url": "https://api.github.com/users/erietz/gists{/gist_id}",
-  "starred_url": "https://api.github.com/users/erietz/starred{/owner}{/repo}",
-  "subscriptions_url": "https://api.github.com/users/erietz/subscriptions",
-  "organizations_url": "https://api.github.com/users/erietz/orgs",
-  "repos_url": "https://api.github.com/users/erietz/repos",
-  "events_url": "https://api.github.com/users/erietz/events{/privacy}",
-  "received_events_url": "https://api.github.com/users/erietz/received_events",
-  "type": "User",
-  "site_admin": false,
-  "name": "Ethan Rietz",
-  "company": "Oregon State University",
-  "blog": "",
-  "location": "Omaha, Ne",
-  "email": null,
-  "hireable": true,
-  "bio": null,
-  "twitter_username": null,
-  "public_repos": 20,
-  "public_gists": 2,
-  "followers": 10,
-  "following": 15,
-  "created_at": "2015-03-11T14:07:00Z",
+  ...
   "updated_at": "2021-11-04T14:35:35Z"
 }
 --]]
 
 
 function Request:parse_response(lines)
+    -- first line of http response
     local split_string = util.split(lines[1], " ")
     local method = split_string[1]
     local status = split_string[2]
@@ -117,7 +89,6 @@ function Request:parse_response(lines)
             local key = header[1]
             local value = header[2]
             headers[key] = value
-            -- table.insert(headers, lines[i])
             if string.find(lines[i]:lower(), "^content%-type:") then
                 self.response_content_type = util.split(lines[i], " ")[2]
             end

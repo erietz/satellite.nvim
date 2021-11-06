@@ -25,10 +25,6 @@ M.request = function()
     elseif string.find(r.response_content_type:lower(), "xml") then
         vim.cmd('set ft=xml')
     end
-
-    for k,v in pairs(r.response_headers) do
-        print('key: ', k, 'value: ', v)
-    end
 end
 
 return M
