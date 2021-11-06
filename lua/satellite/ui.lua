@@ -13,16 +13,10 @@ M.request = function()
     local buf_num = util.prepare_output_buffer()
     r:write_body_to_buffer(buf_num)
 
-    local content_type = r.response_headers["content-type"]
-    if string.find(content_type, "html") then
-        vim.fn.setbufvar(buf_num, '&filetype', 'html')
-    elseif string.find(content_type, "json") then
-        vim.fn.setbufvar(buf_num, '&filetype', 'json')
-    elseif string.find(content_type, "xml") then
-        vim.fn.setbufvar(buf_num, '&filetype', 'xml')
-    end
-
     return r
+end
+
+M.async_request = function()
 end
 
 return M

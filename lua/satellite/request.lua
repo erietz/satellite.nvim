@@ -19,8 +19,18 @@ end
 
 function Request:write_body_to_buffer(buf_num)
     vim.fn.appendbufline(buf_num, 0, self.response_body)
+    -- ensure buffer updates
     vim.cmd('wincmd p')
     vim.cmd('wincmd p')
+
+    local content_type = self.response_headers["content-type"]
+    if string.find(content_type, "html") then
+        vim.fn.setbufvar(buf_num, '&filetype', 'html')
+    elseif string.find(content_type, "json") then
+        vim.fn.setbufvar(buf_num, '&filetype', 'json')
+    elseif string.find(content_type, "xml") then
+        vim.fn.setbufvar(buf_num, '&filetype', 'xml')
+    end
 end
 
 function Request:parse_request()
@@ -64,6 +74,9 @@ function Request:send()
         table.insert(lines, s)
     end
     self:parse_response(lines)
+end
+
+function Request:send_async()
 end
 
 return Request
