@@ -1,30 +1,28 @@
 local Request = require('satellite.request')
+local util = require('satellite.util')
 
-local function newOutputBuffer()
-    vim.cmd("below split SATELLITE_OUTPUT")
-end
 
 -------------------------------------------------------------------------------
 local M = {}
 
 M.request = function()
     local r = Request.new()
-
     local url = r:parse_request()
-
     r:set_url(url)
     r:send()
-    newOutputBuffer()
-    r:write_body_to_buffer()
+    local buf_num = util.prepare_output_buffer()
+    r:write_body_to_buffer(buf_num)
 
-    print(r.response_content_type:lower())
-    if string.find(r.response_content_type:lower(), "html") then
-        vim.cmd('set ft=html')
-    elseif string.find(r.response_content_type:lower(), "json") then
-        vim.cmd('set ft=json')
-    elseif string.find(r.response_content_type:lower(), "xml") then
-        vim.cmd('set ft=xml')
+    local content_type = r.response_headers["content-type"]
+    if string.find(content_type, "html") then
+        vim.fn.setbufvar(buf_num, '&filetype', 'html')
+    elseif string.find(content_type, "json") then
+        vim.fn.setbufvar(buf_num, '&filetype', 'json')
+    elseif string.find(content_type, "xml") then
+        vim.fn.setbufvar(buf_num, '&filetype', 'xml')
     end
+
+    return r
 end
 
 return M
